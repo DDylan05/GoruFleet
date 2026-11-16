@@ -1,0 +1,5 @@
+{
+    "max_relocation_distance_km": 1.5,
+    "min_transfer_quantity": 2,
+    "max_work_bundles": 15
+}

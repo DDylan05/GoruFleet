@@ -1,0 +1,28 @@
+{
+  "stage_rules": {
+    "1": {
+      "max_source_band": 2,
+      "min_target_band": 9
+    },
+    "2": {
+      "max_source_band": 4,
+      "min_target_band": 9
+    },
+    "3": {
+      "max_source_band": 5,
+      "min_target_band": 8
+    }
+  },
+  "participation_rates": {
+    "1": 0.03,
+    "2": 0.06,
+    "3": 0.11
+  },
+  "min_distance_km": 1.1,
+  "bonus_distance_threshold_km": 1.6,
+  "max_distance_km": 2.1,
+  "base_mileage_points": 210,
+  "bonus_mileage_1_points": 60,
+  "bonus_mileage_2_points": 110,
+  "point_value_krw": 1.1
+}

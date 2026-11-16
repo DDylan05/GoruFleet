@@ -1,0 +1,28 @@
+﻿# Python 가상환경
+.venv/
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+
+# API 키 및 비밀 정보
+.streamlit/secrets.toml
+
+# 로컬 환경 파일
+.env
+.env.*
+
+# 학습 모델
+models/
+
+# 원천 OD 데이터: 최종 기준일만 유지
+data/daily_data/*.csv
+!data/daily_data/tpss_bcycl_od_statnhm_20261107.csv
+
+# 이전 테스트 결과
+outputs/operation_results/operations_result_20261025.csv
+outputs/prediction_results/demand_forecast_20261025.csv
+outputs/prediction_results/demand_forecast_20261030.csv
+
+# 개발 환경 설정
+.vscode/
