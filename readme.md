@@ -194,82 +194,71 @@ flowchart TB
 
     subgraph DATA["01. 데이터 입력"]
         direction LR
-        D1["따릉이 대여·반납 이력"]
-        D2["대여소 마스터"]
-        D3["초기 재고 및 재고 이력"]
-        D4["운영 정책 설정"]
+        D1["대여·반납 이력 CSV<br/>대여소 마스터 CSV"]
+        D2["서울시 OpenAPI<br/>초기 재고 및 최근 7일 재고 이력"]
+        D3[("재고 이력 CSV")]
+        D4[("운영 정책 JSON<br/>프로모션·재배치 설정")]
+
+        D2 --> D3
     end
 
-    subgraph ANALYSIS["02. 수요 예측 및 재고 분석"]
+    subgraph CORE["서비스 운영 핵심 기능"]
         direction LR
-        A1["데이터 정제 및 집계"]
-        A2["대여·반납 수요 예측"]
-        A3["초기 재고 결합 및<br/>재고 시뮬레이션"]
-        A4["적정 재고 범위 및<br/>운영 상태 분석"]
 
-        A1 --> A2 --> A3 --> A4
+        subgraph ANALYSIS["02. 수요 예측 및 재고 분석"]
+            direction TB
+            A1["데이터 정제 및 집계"]
+            A2[("대여·반납 예측 모델")]
+            A3["대여·반납 수요 예측"]
+            A4["재고 시뮬레이션 및<br/>적정 재고 범위 분석"]
+
+            A1 --> A2 --> A3 --> A4
+        end
+
+        subgraph OPERATIONS["03. 운영 대응"]
+            direction TB
+            O1["프로모션 시뮬레이션"]
+            O2["직접 재배치 계획"]
+            O3["차량별 작업 배정 및<br/>도로 경로 조회<br/>Kakao Mobility API"]
+
+            O1 --> O2 --> O3
+        end
+
+        subgraph AI["04. AI 운영 지원"]
+            direction TB
+            AI1["AI 운영 보고서<br/>NVIDIA API"]
+            AI2["AI 운영 도우미<br/>NVIDIA API"]
+        end
     end
 
-    subgraph DECISION["03. 운영 대응"]
-        direction LR
-        O1["프로모션 시뮬레이션"]
-        O2["직접 재배치 계획"]
-        O3["차량별 작업 배정 및<br/>도로 경로 조회"]
-
-        O1 --> O2 --> O3
-    end
-
-    subgraph AI["04. AI 운영 지원"]
-        direction LR
-        AI1["AI 운영 보고서"]
-        AI2["AI 운영 도우미"]
-    end
-
-    R["운영 분석 및 시뮬레이션 결과"]
-
-    subgraph APP["05. 사용자 인터페이스"]
+    subgraph APP["05. Streamlit 사용자 인터페이스"]
         direction LR
         U1["운영 현황<br/>대시보드·정류소 분석"]
-        U2["운영 실행<br/>프로모션·재배치"]
+        U2["운영 실행<br/>프로모션·직접 재배치<br/>Kakao Maps SDK"]
         U3["AI 지원<br/>보고서·운영 도우미"]
         U4["운영 정책 설정"]
     end
 
-    subgraph API["외부 서비스"]
-        direction LR
-        X1["서울시 OpenAPI"]
-        X2["Kakao Mobility API"]
-        X3["Kakao Maps SDK"]
-        X4["NVIDIA API"]
-    end
-
     D1 --> A1
-    D2 --> A1
-    X1 --> D3
-    D3 --> A3
+    D3 --> A4
 
-    A4 --> R
     A4 --> O1
-
     D4 --> O1
     D4 --> O2
 
-    O1 --> R
-    O3 --> R
+    A4 --> AI1
+    O1 --> AI1
+    O3 --> AI1
 
-    R --> AI1
-    R --> U1
-    R --> U2
+    A4 --> U1
+    O1 --> U2
+    O3 --> U2
+
+    AI1 --> U3
+    AI2 --> U3
 
     U4 --> D4
-    X2 --- O3
-    X3 --- U1
-    X3 --- U2
 
-    AI1 --- X4
-    AI2 --- X4
-    U1 --> AI2
-    U2 --> AI2
 ```
 
 ### 5-2. 핵심 기술 스택
