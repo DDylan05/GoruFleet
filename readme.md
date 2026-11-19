@@ -189,70 +189,57 @@ flowchart TD
 
 GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반으로 수요를 예측하고, 별도의 재고 데이터를 결합해 운영 분석 결과를 생성합니다. 분석 결과는 프로모션 및 재배치 로직으로 전달되며, 최종 결과는 Streamlit 화면에서 확인할 수 있도록 구성했습니다.
 
-''' mermaid
+```mermaid
 flowchart TB
 
     subgraph INPUT["데이터 및 설정"]
         direction LR
-        D1["대여·반납 이력 CSV"]
-        D2["대여소 마스터 CSV"]
-        D3["재고 이력 CSV<br/>기준일 00시 초기 재고<br/>직전 7일 시간별 재고"]
-        D4["운영 정책 JSON<br/>프로모션·재배치 설정"]
+        D1["대여·반납 이력<br/>대여소 마스터"]
+        D2["재고 이력<br/>초기 재고 · 직전 7일 재고"]
+        D3["운영 정책 JSON<br/>프로모션 · 재배치 설정"]
     end
 
-    PRED["수요 예측<br/>데이터 집계 · 모델 학습 및 예측"]
-    PRED_RESULT[("대여·반납 예측 결과")]
+    subgraph ANALYSIS["수요 및 재고 분석"]
+        direction LR
+        PRED["수요 예측"]
+        FORECAST[("대여·반납 예측 결과")]
+        STOCK["재고 분석<br/>예상 재고 · 적정 재고 범위"]
+        OPS[("운영 분석 결과")]
 
-    SIM["재고 시뮬레이션<br/>예측 대여·반납량 + 초기 재고"]
-    BOUNDS["적정 재고 범위 산출<br/>예측 재고 변화 + 과거 재고 분포"]
-    OPS_RESULT[("운영 분석 결과 CSV<br/>예측 재고 · 적정 하한/상한<br/>부족량 · 초과량 · 운영상태")]
+        PRED --> FORECAST --> STOCK --> OPS
+    end
 
-    PROMO["프로모션 시뮬레이션"]
-    RELOC["직접 재배치 계획<br/>공급·수요 매칭<br/>차량별 작업 배정 및 방문 경로"]
+    subgraph PLAN["운영 계획 수립"]
+        direction TB
+        PROMO["프로모션 시뮬레이션"]
+        RELOC["직접 재배치"]
 
-    AI["AI 운영 지원<br/>AI 운영 보고서 · AI 운영 도우미"]
+        PROMO --> RELOC
+    end
 
     subgraph UI["사용자 인터페이스"]
         direction LR
-        U1["운영 대시보드<br/>정류소별 운영 분석"]
-        U2["프로모션<br/>직접 재배치"]
-        U3["AI 보고서<br/>AI 운영 도우미"]
-        U4["운영 정책 설정"]
+        U1["운영 대시보드<br/>정류소별 분석"]
+        U2["프로모션"]
+        U3["직접 재배치"]
+        U4["AI 운영 지원<br/>운영 보고서 · 운영 도우미"]
+        U5["운영 정책 설정"]
     end
 
     D1 --> PRED
-    D2 --> PRED
+    D2 --> STOCK
 
-    PRED --> PRED_RESULT
-    PRED_RESULT --> SIM
+    OPS --> PROMO
+    D3 --> PROMO
+    D3 --> RELOC
 
-    D3 --> SIM
-    SIM --> BOUNDS
-    D3 --> BOUNDS
-
-    SIM --> OPS_RESULT
-    BOUNDS --> OPS_RESULT
-
-    OPS_RESULT --> PROMO
-    D4 --> PROMO
-    D4 --> RELOC
-
-    PROMO --> RELOC
-
-    OPS_RESULT --> AI
-    PROMO --> AI
-    RELOC --> AI
-
-    OPS_RESULT --> U1
+    OPS --> U1
     PROMO --> U2
-    RELOC --> U2
-    AI --> U3
-    U4 --> D4
-
-    D1 ~~~ D2
-    D2 ~~~ D3
-    D3 ~~~ D4
-'''
+    RELOC --> U3
+    OPS --> U4
+    RELOC --> U4
+    U5 --> D3
+```
 
 ### 5-2. 핵심 기술 스택
 
