@@ -189,55 +189,30 @@ flowchart TD
 
 GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반으로 수요를 예측하고, 별도의 재고 데이터를 결합해 운영 분석 결과를 생성합니다. 분석 결과는 프로모션 및 재배치 로직으로 전달되며, 최종 결과는 Streamlit 화면에서 확인할 수 있도록 구성했습니다.
 
-```mermaid
+
 flowchart TB
 
-    subgraph DATA_ROW["01. 데이터 원천"]
+    subgraph INPUT["데이터 및 설정"]
         direction LR
         D1["대여·반납 이력 CSV"]
         D2["대여소 마스터 CSV"]
-        D3["서울시 OpenAPI"]
-        D4[("초기 재고 및 최근 7일<br/>시간별 재고 이력 CSV")]
-
-        D3 --> D4
+        D3["재고 이력 CSV<br/>기준일 00시 초기 재고<br/>직전 7일 시간별 재고"]
+        D4["운영 정책 JSON<br/>프로모션·재배치 설정"]
     end
 
-    subgraph CORE_ROW["핵심 서비스 기능"]
-        direction LR
+    PRED["수요 예측<br/>데이터 집계 · 모델 학습 및 예측"]
+    PRED_RESULT[("대여·반납 예측 결과")]
 
-        subgraph FORECAST["02. 수요 예측"]
-            direction TB
-            A1["데이터 정제 및 집계"]
-            A2[("대여·반납 예측 모델")]
-            A3["정류소별·시간대별<br/>대여·반납량 예측"]
+    SIM["재고 시뮬레이션<br/>예측 대여·반납량 + 초기 재고"]
+    BOUNDS["적정 재고 범위 산출<br/>예측 재고 변화 + 과거 재고 분포"]
+    OPS_RESULT[("운영 분석 결과 CSV<br/>예측 재고 · 적정 하한/상한<br/>부족량 · 초과량 · 운영상태")]
 
-            A1 --> A2 --> A3
-        end
+    PROMO["프로모션 시뮬레이션"]
+    RELOC["직접 재배치 계획<br/>공급·수요 매칭<br/>차량별 작업 배정 및 방문 경로"]
 
-        subgraph OPERATIONS["03. 운영 대응"]
-            direction TB
-            O1["이용자 참여형<br/>프로모션 시뮬레이션"]
-            O2["직접 재배치 계획"]
-            O3["차량별 작업 배정 및 경로 조회<br/>Kakao Mobility API"]
+    AI["AI 운영 지원<br/>AI 운영 보고서 · AI 운영 도우미"]
 
-            O1 --> O2 --> O3
-        end
-
-        subgraph AI["04. AI 운영 지원"]
-            direction TB
-            AI1["AI 운영 보고서"]
-            AI2["AI 운영 도우미"]
-            AI1 --- AI2
-            AI1 -.-> NVIDIA["NVIDIA API"]
-            AI2 -.-> NVIDIA
-        end
-    end
-
-    STOCK["재고 분석 결과<br/>재고 시뮬레이션 및 적정 재고 하한·상한"]
-
-    CONFIG[("운영 정책 JSON<br/>프로모션·재배치 설정")]
-
-    subgraph APP_ROW["05. Streamlit 사용자 인터페이스"]
+    subgraph UI["사용자 인터페이스"]
         direction LR
         U1["운영 대시보드<br/>정류소별 운영 분석"]
         U2["프로모션<br/>직접 재배치"]
@@ -245,28 +220,39 @@ flowchart TB
         U4["운영 정책 설정"]
     end
 
-    D1 --> A1
-    D2 --> A1
-    A3 --> STOCK
-    D4 --> STOCK
+    D1 --> PRED
+    D2 --> PRED
 
-    STOCK --> O1
-    CONFIG --> O1
-    CONFIG --> O2
+    PRED --> PRED_RESULT
+    PRED_RESULT --> SIM
 
-    STOCK --> AI1
-    O1 --> AI1
-    O3 --> AI1
+    D3 --> SIM
+    SIM --> BOUNDS
+    D3 --> BOUNDS
 
-    STOCK --> U1
-    A3 --> U1
-    O1 --> U2
-    O3 --> U2
-    AI1 --> U3
-    AI2 --> U3
+    SIM --> OPS_RESULT
+    BOUNDS --> OPS_RESULT
 
-    U4 --> CONFIG
-```
+    OPS_RESULT --> PROMO
+    D4 --> PROMO
+    D4 --> RELOC
+
+    PROMO --> RELOC
+
+    OPS_RESULT --> AI
+    PROMO --> AI
+    RELOC --> AI
+
+    OPS_RESULT --> U1
+    PROMO --> U2
+    RELOC --> U2
+    AI --> U3
+    U4 --> D4
+
+    D1 ~~~ D2
+    D2 ~~~ D3
+    D3 ~~~ D4
+
 
 ### 5-2. 핵심 기술 스택
 
