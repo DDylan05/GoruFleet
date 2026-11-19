@@ -81,32 +81,31 @@ flowchart TB
     subgraph MONITOR["운영 현황 파악"]
         direction LR
         DASH["운영 대시보드"]
-        ANALYSIS["정류소별 재고 분석"]
+        STATION["정류소별 운영 분석"]
 
-        DASH --> ANALYSIS
+        DASH --> STATION
     end
 
+    POLICY["운영 정책 확인 및 설정<br/>프로모션 참여율 · 보상 기준<br/>재배치 거리 · 이동 수량 조건"]
+
     subgraph PLAN["운영 대응 계획 수립"]
-        direction LR
+        direction TB
         PROMO["프로모션 시뮬레이션"]
-        RELOC["직접 재배치 계획"]
+        RELOC["직접 재배치 계획<br/>프로모션 적용 후 잔여 불균형"]
 
         PROMO --> RELOC
     end
 
-    REVIEW["운영 대응안 검토"]
+    REVIEW["운영 대응안 검토<br/>AI 운영 보고서 · AI 운영 도우미"]
 
-    POLICY["운영 정책 설정"]
-    AI["AI 운영 지원<br/>운영 보고서 · 운영 도우미"]
+    STATION --> POLICY
+    POLICY --> PROMO
 
-    ANALYSIS --> PROMO
+    STATION --> REVIEW
+    PROMO --> REVIEW
     RELOC --> REVIEW
 
-    POLICY -.-> PROMO
-    POLICY -.-> RELOC
-
-    ANALYSIS -.-> AI
-    RELOC -.-> AI
+    REVIEW -.->|정책 보완 및 재검토| POLICY
 ```
 
 ### 화면별 의사결정 지원 기능
