@@ -191,101 +191,85 @@ GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반
 
 ```mermaid
 flowchart TB
-    subgraph DATA["데이터 및 설정"]
+
+    subgraph DATA["01. 데이터 입력"]
         direction LR
-        A["따릉이 대여·반납 이력 CSV"]
-        B["대여소 마스터 CSV"]
-        C["서울시 OpenAPI<br/>초기 재고 및 재고 이력"]
-        D["운영 정책 JSON"]
+        D1["따릉이 대여·반납 이력"]
+        D2["대여소 마스터"]
+        D3["초기 재고 및 재고 이력"]
+        D4["운영 정책 설정"]
     end
 
-    subgraph PREDICT["데이터 처리 및 수요 예측"]
+    subgraph ANALYSIS["02. 수요 예측 및 재고 분석"]
         direction LR
-        E["데이터 집계<br/>모델 학습 및 검증"]
-        M[("대여·반납 예측 모델")]
-        F["대여·반납 수요 예측"]
-        G["초기 재고 결합<br/>재고 시뮬레이션"]
-        H["운영 실적 및<br/>예측 분석"]
+        A1["데이터 정제 및 집계"]
+        A2["대여·반납 수요 예측"]
+        A3["초기 재고 결합 및<br/>재고 시뮬레이션"]
+        A4["적정 재고 범위 및<br/>운영 상태 분석"]
+
+        A1 --> A2 --> A3 --> A4
     end
 
-    subgraph LOGIC["운영 의사결정 로직"]
+    subgraph DECISION["03. 운영 대응"]
         direction LR
-        I["프로모션<br/>시나리오 계산"]
-        J["공급·수요 매칭<br/>차량 배정"]
-        K["차량별 도로<br/>경로 조회"]
-        L["AI 운영 보고서<br/>생성"]
-        N["AI 운영 도우미"]
+        O1["프로모션 시뮬레이션"]
+        O2["직접 재배치 계획"]
+        O3["차량별 작업 배정 및<br/>도로 경로 조회"]
+
+        O1 --> O2 --> O3
     end
 
-    subgraph STORAGE["파일 저장소"]
+    subgraph AI["04. AI 운영 지원"]
         direction LR
-        O[("예측·운영·프로모션 결과")]
-        P[("운영 정책 설정")]
+        AI1["AI 운영 보고서"]
+        AI2["AI 운영 도우미"]
     end
 
-    subgraph APP["Streamlit 사용자 화면"]
+    R["운영 분석 및 시뮬레이션 결과"]
+
+    subgraph APP["05. 사용자 인터페이스"]
         direction LR
-        U1["운영 대시보드"]
-        U2["정류소별 운영 분석"]
-        U3["프로모션 시뮬레이션"]
-        U4["직접 재배치 계획"]
-        U5["AI 운영 보고서"]
-        U6["운영 정책 설정"]
+        U1["운영 현황<br/>대시보드·정류소 분석"]
+        U2["운영 실행<br/>프로모션·재배치"]
+        U3["AI 지원<br/>보고서·운영 도우미"]
+        U4["운영 정책 설정"]
     end
 
-    subgraph EXTERNAL["외부 서비스"]
+    subgraph API["외부 서비스"]
         direction LR
-        X1["Kakao Mobility<br/>Directions API"]
-        X2["Kakao Maps<br/>JavaScript SDK"]
-        X3["NVIDIA API<br/>LLM 응답 생성"]
+        X1["서울시 OpenAPI"]
+        X2["Kakao Mobility API"]
+        X3["Kakao Maps SDK"]
+        X4["NVIDIA API"]
     end
 
-    A --> E
-    B --> E
-    E --> M
-    M --> F
-    F --> G
-    B --> G
-    C --> G
+    D1 --> A1
+    D2 --> A1
+    X1 --> D3
+    D3 --> A3
 
-    G --> O
-    G --> H
-    H --> O
+    A4 --> R
+    A4 --> O1
 
-    G --> I
-    D --> I
-    I --> O
+    D4 --> O1
+    D4 --> O2
 
-    I --> J
-    D --> J
-    J --> K
-    K --> X1
-    X1 --> U4
+    O1 --> R
+    O3 --> R
 
-    X2 --> U1
-    X2 --> U3
-    X2 --> U4
+    R --> AI1
+    R --> U1
+    R --> U2
 
-    G --> U1
-    H --> U1
-    G --> U2
-    H --> U2
-    I --> U3
-    J --> U4
+    U4 --> D4
+    X2 --- O3
+    X3 --- U1
+    X3 --- U2
 
-    G --> L
-    H --> L
-    I --> L
-    J --> L
-    L --> X3
-    N --> X3
-    X3 --> U5
-
-    U6 --> P
-    P --> D
-
-    I ~~~ L
-    L ~~~ N
+    AI1 --- X4
+    AI2 --- X4
+    U1 --> AI2
+    U2 --> AI2
 ```
 
 ### 5-2. 핵심 기술 스택
