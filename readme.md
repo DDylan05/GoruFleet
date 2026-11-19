@@ -76,28 +76,37 @@ GoruFleet은 수요 예측과 재고 분석을 바탕으로 운영 현황을 파
 ### 운영 프로세스
 
 ```mermaid
-flowchart TD
-    A["대여·반납 이력<br/>정류소 정보<br/>시간대별 재고 데이터"] --> B["수요 예측 및 재고 분석"]
+flowchart TB
 
-    B --> C["운영 대시보드<br/>전체 운영 현황 파악"]
-    B --> D["정류소별 운영 분석<br/>시간대별 부족·과잉 확인"]
+    subgraph MONITOR["운영 현황 파악"]
+        direction LR
+        DASH["운영 대시보드"]
+        ANALYSIS["정류소별 재고 분석"]
 
-    C --> E["운영 담당자 판단<br/>대응 지역 및 시간대 선정"]
-    D --> E
+        DASH --> ANALYSIS
+    end
 
-    E --> F["프로모션 시뮬레이션<br/>참여율·마일리지 조건 비교"]
-    F --> G["프로모션 적용 후<br/>잔여 재고 불균형 확인"]
+    subgraph PLAN["운영 대응 계획 수립"]
+        direction LR
+        PROMO["프로모션 시뮬레이션"]
+        RELOC["직접 재배치 계획"]
 
-    G --> H["직접 재배치 계획<br/>공급·수요 정류소 매칭"]
-    H --> I["차량별 작업 배정<br/>방문 순서 및 도로 경로 확인"]
+        PROMO --> RELOC
+    end
 
-    C --> J["AI 운영 보고서"]
-    D --> J
-    F --> J
-    H --> J
+    REVIEW["운영 대응안 검토"]
 
-    K["운영 정책 설정"] -.-> F
-    K -.-> H
+    POLICY["운영 정책 설정"]
+    AI["AI 운영 지원<br/>운영 보고서 · 운영 도우미"]
+
+    ANALYSIS --> PROMO
+    RELOC --> REVIEW
+
+    POLICY -.-> PROMO
+    POLICY -.-> RELOC
+
+    ANALYSIS -.-> AI
+    RELOC -.-> AI
 ```
 
 ### 화면별 의사결정 지원 기능
