@@ -189,7 +189,7 @@ flowchart TD
 
 GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반으로 수요를 예측하고, 별도의 재고 데이터를 결합해 운영 분석 결과를 생성합니다. 분석 결과는 프로모션 및 재배치 로직으로 전달되며, 최종 결과는 Streamlit 화면에서 확인할 수 있도록 구성했습니다.
 
-
+""" mermaid
 flowchart TB
 
     subgraph INPUT["데이터 및 설정"]
