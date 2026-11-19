@@ -2,8 +2,6 @@
 
 지역·시간대별 재고 불균형을 분석하고, 이용자 참여형 프로모션과 직접 재배치 계획을 통해 **운영 담당자의 의사결정을 지원하는 솔루션입니다.**
 
----
-
 ## 1. 프로젝트 개요
 
 ### 프로젝트 목적
@@ -66,7 +64,6 @@ GoruFleet은 직접 재배치에 집중되던 운영 부담을 줄이기 위한 
 
 > **참고:** 고객 유입 및 장기 이용 효과는 본 MVP에서 검증한 성과가 아니라 향후 검증이 필요한 기대효과입니다.
 
----
 
 ## 3. 솔루션 구조 및 운영 프로세스
 
@@ -136,16 +133,18 @@ flowchart TB
 ### 주요 화면
 정류소별 운영 분석
 ![정류소별 운영 분석](assets/station_analysis.png)
+
 프로모션 시뮬레이션
 ![프로모션 시뮬레이션](assets/promotion2.png)
+
 재배치 계획
 ![직접 재배치 계획](assets/relocation.png)
+
 AI 운영 도우미
 ![AI 운영 도우미](assets/ai_helper.png)
+
 AI 운영 보고서
 ![AI 운영 보고서](assets/ai_report.png)
-
----
 
 ## 4. 주요 기획 및 문제 해결 사례
 
@@ -206,7 +205,7 @@ AI 운영 보고서
 ---
 
 <details>
-<summary><strong>5. 시스템 아키텍처 및 기술 구현</strong></summary>
+<summary><h2>5. 시스템 아키텍처 및 기술 구현</h2></summary>
 
 ### 5-1. 시스템 아키텍처
 
@@ -354,7 +353,7 @@ flowchart TB
 ---
 
 <details>
-<summary><strong>6. 프로젝트 한계 및 향후 개선 방향</strong></summary>
+<summary><h2>6. 프로젝트 한계 및 향후 개선 방향</h2></summary>
 
 GoruFleet은 공공자전거 데이터를 활용해 PM 운영사의 재고 균형 관리 과정을 구현한 MVP입니다. 실제 운영 환경과 데이터 구조가 다르기 때문에 일부 기능은 가정한 조건을 기반으로 설계했으며, 향후 다음 방향으로 개선할 수 있습니다.
 
@@ -393,7 +392,7 @@ GoruFleet은 공공자전거 데이터를 활용해 PM 운영사의 재고 균�
 ---
 
 <details>
-<summary><strong>참고 자료</strong></summary>
+<summary><h2>참고 자료</h2></summary>
 
 ### 시장 및 운영 환경
 
