@@ -86,7 +86,7 @@ flowchart TB
         DASH --> STATION
     end
 
-    POLICY["운영 정책 확인 및 설정<br/>프로모션 참여율 · 보상 기준<br/>재배치 거리 · 이동 수량 조건"]
+    POLICY["운영 정책 확인 및 설정"]
 
     subgraph PLAN["운영 대응 계획 수립"]
         direction TB
