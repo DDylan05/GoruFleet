@@ -190,8 +190,9 @@ flowchart TD
 GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반으로 수요를 예측하고, 별도의 재고 데이터를 결합해 운영 분석 결과를 생성합니다. 분석 결과는 프로모션 및 재배치 로직으로 전달되며, 최종 결과는 Streamlit 화면에서 확인할 수 있도록 구성했습니다.
 
 ```mermaid
-flowchart TD
+flowchart TB
     subgraph DATA["데이터 및 설정"]
+        direction LR
         A["따릉이 대여·반납 이력 CSV"]
         B["대여소 마스터 CSV"]
         C["서울시 OpenAPI<br/>초기 재고 및 재고 이력"]
@@ -199,27 +200,31 @@ flowchart TD
     end
 
     subgraph PREDICT["데이터 처리 및 수요 예측"]
-        E["daily_model_pipeline.py<br/>데이터 집계·모델 학습 및 검증"]
-        M[("models/<br/>대여·반납 예측 모델")]
-        F["demand_predictor.py<br/>대여·반납 수요 예측"]
-        G["operations_simulator.py<br/>초기 재고 결합 및 재고 시뮬레이션"]
-        H["rolling_operations.py<br/>최근 운영 실적 및 예측 분석"]
+        direction LR
+        E["데이터 집계<br/>모델 학습 및 검증"]
+        M[("대여·반납 예측 모델")]
+        F["대여·반납 수요 예측"]
+        G["초기 재고 결합<br/>재고 시뮬레이션"]
+        H["운영 실적 및<br/>예측 분석"]
     end
 
     subgraph LOGIC["운영 의사결정 로직"]
-        I["promotion_simulator.py<br/>참여율·보상 시나리오 계산"]
-        J["relocation_planner.py<br/>공급·수요 매칭 및 차량 배정"]
-        K["route_api.py<br/>차량별 도로 경로 조회"]
-        L["ai_report.py<br/>AI 운영 보고서"]
-        N["operations_assistant.py<br/>AI 운영 도우미"]
+        direction LR
+        I["프로모션<br/>시나리오 계산"]
+        J["공급·수요 매칭<br/>차량 배정"]
+        K["차량별 도로<br/>경로 조회"]
+        L["AI 운영 보고서<br/>생성"]
+        N["AI 운영 도우미"]
     end
 
     subgraph STORAGE["파일 저장소"]
-        O[("outputs/<br/>예측·운영·프로모션 결과")]
-        P[("config/<br/>운영 정책 설정")]
+        direction LR
+        O[("예측·운영·프로모션 결과")]
+        P[("운영 정책 설정")]
     end
 
     subgraph APP["Streamlit 사용자 화면"]
+        direction LR
         U1["운영 대시보드"]
         U2["정류소별 운영 분석"]
         U3["프로모션 시뮬레이션"]
@@ -229,12 +234,14 @@ flowchart TD
     end
 
     subgraph EXTERNAL["외부 서비스"]
-        X1["Kakao Mobility Directions API"]
-        X2["Kakao Maps JavaScript SDK"]
+        direction LR
+        X1["Kakao Mobility<br/>Directions API"]
+        X2["Kakao Maps<br/>JavaScript SDK"]
         X3["NVIDIA API<br/>LLM 응답 생성"]
     end
 
     A --> E
+    B --> E
     E --> M
     M --> F
     F --> G
@@ -271,14 +278,14 @@ flowchart TD
     I --> L
     J --> L
     L --> X3
-    X3 --> U5
-
     N --> X3
+    X3 --> U5
 
     U6 --> P
     P --> D
-    O --> U1
-    O --> U2
+
+    I ~~~ L
+    L ~~~ N
 ```
 
 ### 5-2. 핵심 기술 스택
