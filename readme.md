@@ -86,26 +86,24 @@ flowchart TB
         DASH --> STATION
     end
 
-    POLICY["운영 정책 확인 및 설정"]
+    POLICY["운영 정책 설정"]
 
     subgraph PLAN["운영 대응 계획 수립"]
         direction TB
         PROMO["프로모션 시뮬레이션"]
-        RELOC["직접 재배치 계획<br/>프로모션 적용 후 잔여 불균형"]
+        RELOC["직접 재배치 계획"]
 
         PROMO --> RELOC
     end
 
-    REVIEW["운영 대응안 검토<br/>AI 운영 보고서 · AI 운영 도우미"]
+    REVIEW["운영 대응안 검토"]
 
     STATION --> POLICY
     POLICY --> PROMO
-
-    STATION --> REVIEW
-    PROMO --> REVIEW
     RELOC --> REVIEW
 
-    REVIEW -.->|정책 보완 및 재검토| POLICY
+    REVIEW -.->|필요 시 정책 조정| POLICY
+```
 ```
 
 ### 화면별 의사결정 지원 기능
