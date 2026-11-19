@@ -192,73 +192,80 @@ GoruFleet은 공공자전거 대여·반납 이력과 정류소 정보를 기반
 ```mermaid
 flowchart TB
 
-    subgraph DATA["01. 데이터 입력"]
+    subgraph DATA_ROW["01. 데이터 원천"]
         direction LR
-        D1["대여·반납 이력 CSV<br/>대여소 마스터 CSV"]
-        D2["서울시 OpenAPI<br/>초기 재고 및 최근 7일 재고 이력"]
-        D3[("재고 이력 CSV")]
-        D4[("운영 정책 JSON<br/>프로모션·재배치 설정")]
+        D1["대여·반납 이력 CSV"]
+        D2["대여소 마스터 CSV"]
+        D3["서울시 OpenAPI"]
+        D4[("초기 재고 및 최근 7일<br/>시간별 재고 이력 CSV")]
 
-        D2 --> D3
+        D3 --> D4
     end
 
-    subgraph CORE["서비스 운영 핵심 기능"]
+    subgraph CORE_ROW["핵심 서비스 기능"]
         direction LR
 
-        subgraph ANALYSIS["02. 수요 예측 및 재고 분석"]
+        subgraph FORECAST["02. 수요 예측"]
             direction TB
             A1["데이터 정제 및 집계"]
             A2[("대여·반납 예측 모델")]
-            A3["대여·반납 수요 예측"]
-            A4["재고 시뮬레이션 및<br/>적정 재고 범위 분석"]
+            A3["정류소별·시간대별<br/>대여·반납량 예측"]
 
-            A1 --> A2 --> A3 --> A4
+            A1 --> A2 --> A3
         end
 
         subgraph OPERATIONS["03. 운영 대응"]
             direction TB
-            O1["프로모션 시뮬레이션"]
+            O1["이용자 참여형<br/>프로모션 시뮬레이션"]
             O2["직접 재배치 계획"]
-            O3["차량별 작업 배정 및<br/>도로 경로 조회<br/>Kakao Mobility API"]
+            O3["차량별 작업 배정 및 경로 조회<br/>Kakao Mobility API"]
 
             O1 --> O2 --> O3
         end
 
         subgraph AI["04. AI 운영 지원"]
             direction TB
-            AI1["AI 운영 보고서<br/>NVIDIA API"]
-            AI2["AI 운영 도우미<br/>NVIDIA API"]
+            AI1["AI 운영 보고서"]
+            AI2["AI 운영 도우미"]
+            AI1 --- AI2
+            AI1 -.-> NVIDIA["NVIDIA API"]
+            AI2 -.-> NVIDIA
         end
     end
 
-    subgraph APP["05. Streamlit 사용자 인터페이스"]
+    STOCK["재고 분석 결과<br/>재고 시뮬레이션 및 적정 재고 하한·상한"]
+
+    CONFIG[("운영 정책 JSON<br/>프로모션·재배치 설정")]
+
+    subgraph APP_ROW["05. Streamlit 사용자 인터페이스"]
         direction LR
-        U1["운영 현황<br/>대시보드·정류소 분석"]
-        U2["운영 실행<br/>프로모션·직접 재배치<br/>Kakao Maps SDK"]
-        U3["AI 지원<br/>보고서·운영 도우미"]
+        U1["운영 대시보드<br/>정류소별 운영 분석"]
+        U2["프로모션<br/>직접 재배치"]
+        U3["AI 보고서<br/>AI 운영 도우미"]
         U4["운영 정책 설정"]
     end
 
     D1 --> A1
-    D3 --> A4
+    D2 --> A1
+    A3 --> STOCK
+    D4 --> STOCK
 
-    A4 --> O1
-    D4 --> O1
-    D4 --> O2
+    STOCK --> O1
+    CONFIG --> O1
+    CONFIG --> O2
 
-    A4 --> AI1
+    STOCK --> AI1
     O1 --> AI1
     O3 --> AI1
 
-    A4 --> U1
+    STOCK --> U1
+    A3 --> U1
     O1 --> U2
     O3 --> U2
-
     AI1 --> U3
     AI2 --> U3
 
-    U4 --> D4
-
+    U4 --> CONFIG
 ```
 
 ### 5-2. 핵심 기술 스택
