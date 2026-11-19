@@ -96,14 +96,15 @@ flowchart TB
         PROMO --> RELOC
     end
 
+    AI_REPORT["AI 운영 보고서"]
     REVIEW["운영 대응안 검토"]
 
     STATION --> POLICY
     POLICY --> PROMO
-    RELOC --> REVIEW
+    RELOC --> AI_REPORT
+    AI_REPORT --> REVIEW
 
     REVIEW -.->|필요 시 정책 조정| POLICY
-```
 ```
 
 ### 화면별 의사결정 지원 기능
